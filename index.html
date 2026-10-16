@@ -1,116 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SYSTEM - Custom Quest + Timer</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SYSTEM - Shadow Monarch</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',monospace}
-body{background:#02060e;color:#fff;min-height:100vh}
-.bg{position:fixed;inset:0;background:radial-gradient(circle at 50% 0%, #0a2a5a 0%, #02060e 70%);z-index:-1}
-.header{display:flex;justify-content:space-between;padding:14px;border-bottom:1px solid #0ff3;align-items:center}
-.logo{color:#00e5ff;font-weight:900;text-shadow:0 0 15px #00e5ff;font-size:13px}
-.right{display:flex;gap:8px;align-items:center}
-.timer{border:1px solid #ff2a2a;color:#ff2a2a;padding:6px 10px;border-radius:20px;font-size:10px;box-shadow:0 0 10px #ff2a2a}
-.setBtn{border:1px solid #00e5ff;color:#00e5ff;background:#00e5ff1a;padding:6px 10px;border-radius:20px;font-size:10px;cursor:pointer}
-.container{max-width:430px;margin:0 auto;padding:16px}
-.title{font-size:26px;text-align:center;font-weight:900;letter-spacing:3px;text-shadow:0 0 20px #00e5ff}
-.sub{text-align:center;color:#888;font-size:10px;letter-spacing:2px;margin:6px 0 14px}
-.addBox{display:flex;gap:8px;margin-bottom:14px}
-.addBox input{flex:1;background:#0a1430;border:1px solid #1a3a7a;color:#fff;padding:14px;border-radius:12px;outline:none;font-size:13px}
-.addBox button{background:linear-gradient(90deg,#00e5ff,#5a00ff);border:none;color:#fff;padding:0 18px;border-radius:12px;font-weight:900;cursor:pointer}
-.timeBox{background:#0a1430;border:1px solid #00e5ff33;border-radius:12px;padding:12px;display:none;margin-bottom:14px}
+body{background:#02060e;color:#fff;min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at top,#0b2a6b 0%,#02060e 65%);z-index:-2}
+#particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:100;display:none}
+.header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #00e5ff22;background:#02060eaa;position:sticky;top:0;z-index:10}
+.rankBadge{border:1px solid #ffd700;color:#ffd700;background:#ffd70014;padding:5px 12px;border-radius:20px;font-size:11px;box-shadow:0 0 10px #ffd70066}
+.rightHead{display:flex;gap:8px;align-items:center}
+.timer{border:1px solid #ff2a2a;color:#ff2a2a;padding:5px 10px;border-radius:20px;font-size:10px}
+.iconBtn{border:1px solid #00e5ff66;color:#00e5ff;background:#00e5ff14;padding:5px 10px;border-radius:20px;font-size:10px;cursor:pointer}
+.container{max-width:440px;margin:0 auto;padding:14px}
+.title{font-size:28px;text-align:center;font-weight:800;letter-spacing:3px;color:#fff;text-shadow:0 0 20px #00e5ff}
+.subTitle{text-align:center;font-size:10px;color:#ff3b3b;letter-spacing:3px;margin:4px 0 8px}
+.playerInfo{display:flex;justify-content:space-between;background:#0a1430cc;border:1px solid #1a3a7a;border-radius:12px;padding:10px 12px;margin:10px 0}
+.pTitle{color:#00e5ff;font-size:10px}.pVal{font-size:11px;color:#ffd700}
+.goldBar{background:#111;border:1px solid #333;border-radius:8px;padding:6px 10px;text-align:center;font-size:11px;color:#ffd700;margin-bottom:10px}
+.addBox{display:flex;gap:6px;margin-bottom:10px}
+.addBox input{flex:1;background:#0a1430;border:1px solid #1a3a7a;color:#fff;padding:12px;border-radius:10px;outline:none;font-size:12px}
+.addBox button{background:linear-gradient(90deg,#00e5ff,#7a00ff);border:none;color:#fff;padding:0 14px;border-radius:10px;font-weight:800;cursor:pointer}
+.timeBox{background:#0a1430;border:1px solid #00e5ff44;border-radius:10px;padding:10px;display:none;margin-bottom:10px}
 .timeBox.show{display:block}
-.timeBox h4{font-size:11px;color:#00e5ff;margin-bottom:8px;letter-spacing:1px}
-.timeInputs{display:flex;gap:8px}
-.timeInputs input{flex:1;background:#02060e;border:1px solid #1a3a7a;color:#fff;padding:10px;border-radius:8px;text-align:center}
-.timeInputs button{background:#00e5ff;color:#000;border:none;padding:10px 16px;border-radius:8px;font-weight:900;cursor:pointer}
 .bar{width:100%;height:8px;background:#111;border-radius:10px;overflow:hidden;margin-bottom:6px;border:1px solid #222}
-.fill{height:100%;width:0%;background:linear-gradient(90deg,#00e5ff,#7a00ff);transition:0.5s;box-shadow:0 0 15px #00e5ff}
-.count{text-align:center;font-size:11px;color:#888;margin-bottom:16px;letter-spacing:2px}
-.card{background:linear-gradient(180deg,#0a1430,#060d20);border:1px solid #1a2a5a;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.card.done{border-color:#00e5ff;box-shadow:0 0 20px #00e5ff66}
-.left{display:flex;gap:10px;align-items:center;flex:1}
-.num{width:28px;height:28px;background:#111;border:1px solid #333;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#00e5ff}
-.name{font-size:12px;flex:1;background:transparent;border:none;color:#fff;outline:none}
-.actions{display:flex;gap:8px}
-.check{width:32px;height:32px;border:2px solid #2a3a6a;border-radius:8px;display:grid;place-items:center;cursor:pointer}
-.del{color:#ff4444;background:#ff44441a;border:1px solid #ff44444a;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
-.btn{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(90deg,#00e5ff,#5a00ff);color:#fff;font-weight:900;letter-spacing:2px;font-size:14px;margin-top:12px;cursor:pointer;box-shadow:0 0 25px #00e5ff88}
-.footer{margin-top:18px;text-align:center}
-.creator{border:1px solid #00e5ff33;background:#00e5ff0f;color:#00e5ff;padding:8px 18px;border-radius:20px;font-size:11px;text-decoration:none}
-.popup{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;place-items:center;z-index:99}
-.popup.show{display:grid}
-.pop-box{background:#0a1430;border:2px solid #00e5ff;padding:28px;border-radius:20px;text-align:center;box-shadow:0 0 50px #00e5ff;max-width:320px}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,#00e5ff,#7a00ff);transition:.4s;box-shadow:0 0 12px #00e5ff}
+.count{text-align:center;font-size:10px;color:#888;margin-bottom:12px;letter-spacing:1px}
+.card{background:linear-gradient(180deg,#0a1430,#060d20);border:1px solid #1a2a5a;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.card.done{border-color:#00e5ff;box-shadow:0 0 15px #00e5ff55}
+.num{width:24px;height:24px;background:#111;border:1px solid #333;border-radius:5px;display:grid;place-items:center;font-size:9px;color:#00e5ff}
+.qName{font-size:12px;background:transparent;border:none;color:#fff;outline:none;flex:1;margin-left:8px}
+.actions{display:flex;gap:6px}
+.check,.del{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;cursor:pointer;font-size:14px}
+.check{border:2px solid #2a3a6a}.del{color:#ff4444;background:#ff44441a;border:1px solid #ff44444a}
+.card.done.check{background:#00e5ff;color:#000;border-color:#00e5ff}
+.shopGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.shopItem{background:#0a1430;border:1px solid #333;border-radius:10px;padding:10px;text-align:center;transition:.2s}
+.shopItem.unlocked{border-color:#ffd700;box-shadow:0 0 12px #ffd70055}
+.shopItem img{width:100%;height:70px;object-fit:cover;border-radius:6px;filter:grayscale(1)}.shopItem.unlocked img{filter:none}
+.shopItem button{margin-top:6px;width:100%;padding:6px;border:none;border-radius:6px;background:#ffd700;color:#000;font-weight:800;font-size:10px;cursor:pointer}
+.shopItem button:disabled{background:#333;color:#666}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(90deg,#00e5ff,#7a00ff);color:#fff;font-weight:800;letter-spacing:2px;font-size:13px;margin-top:10px;cursor:pointer;box-shadow:0 0 20px #00e5ff88}
+.footer{text-align:center;margin-top:14px}.creator{border:1px solid #00e5ff33;background:#00e5ff0f;color:#00e5ff;padding:7px 16px;border-radius:20px;font-size:10px;text-decoration:none}
+/* Stat Window */
+.statWin{position:fixed;top:60px;right:10px;width:280px;background:rgba(5,20,50,0.92);backdrop-filter:blur(12px);border:1px solid #00e5ff;box-shadow:0 0 30px #00e5ff66;border-radius:16px;padding:16px;display:none;z-index:50;animation:slideIn.3s}
+.statWin.show{display:block}@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.statRow{display:flex;justify-content:space-between;margin:8px 0;font-size:12px}.statRow span:last-child{color:#00e5ff}
+/* Popups */
+.popup{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;place-items:center;z-index:90}.popup.show{display:grid}
+.pop-box{background:#0a1430;border:2px solid #00e5ff;padding:26px;border-radius:18px;text-align:center;box-shadow:0 0 50px #00e5ff;max-width:340px}
+.penaltyScreen{position:fixed;inset:0;background:radial-gradient(circle,#5a1a00,#200000);z-index:95;display:none;place-items:center;text-align:center}
+.penaltyScreen.show{display:grid}
+.penaltyScreen::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9') center/cover;opacity:0.15;animation:shake.2s infinite}
+@keyframes shake{0%,100%{transform:translate(0)}25%{transform:translate(1px,1px)}75%{transform:translate(-1px,-1px)}}
 </style>
 </head>
 <body>
+<canvas id="particleCanvas"></canvas>
 <div class="bg"></div>
 <div class="header">
-<div class="logo">● SYSTEM</div>
-<div class="right">
-<div class="setBtn" onclick="toggleTimeBox()">⏱ SET TIME</div>
-<div class="timer" id="timer">LEFT: 24:00:00</div>
+<div class="rankBadge" id="rankBadge">E-RANK</div>
+<div class="rightHead">
+<div class="iconBtn" onclick="toggleStats()">[C] STATS</div>
+<div class="iconBtn" onclick="toggleShop()">SHOP</div>
+<div class="timer" id="timer">24:00:00</div>
 </div>
 </div>
 
 <div class="container">
-<div class="title">DAILY QUEST</div>
-<div class="sub" id="subText">SET YOUR OWN TIME & TARGET</div>
+<div class="title">SYSTEM</div>
+<div class="subTitle" id="titleDisplay">TITLE: The Weakest Hunter</div>
+<div class="playerInfo">
+<div><div class="pTitle">PLAYER</div><div class="pVal">Sung Shiva</div></div>
+<div><div class="pTitle">LEVEL</div><div class="pVal" id="lvl">1</div></div>
+<div><div class="pTitle">STREAK</div><div class="pVal" id="streak">0 Days</div></div>
+</div>
+<div class="goldBar">💎 Mana Crystals: <span id="gold">0</span> | Press C for Stats</div>
 
+<div class="addBox"><input id="newQuest" placeholder="New quest: Gym, Coding..."><button onclick="addQuest()">ADD</button></div>
 <div class="timeBox" id="timeBox">
-<h4>⏰ TIME LIMIT SET KARO</h4>
-<div class="timeInputs">
-<input id="hoursIn" type="number" placeholder="Hours" min="0" max="99" value="24">
-<input id="minsIn" type="number" placeholder="Mins" min="0" max="59" value="0">
-<button onclick="setNewTime()">SET</button>
+<div style="display:flex;gap:6px"><input id="hIn" type="number" placeholder="H" style="flex:1;background:#02060e;border:1px solid #333;color:#fff;padding:8px;border-radius:6px;text-align:center"><input id="mIn" type="number" placeholder="M" style="flex:1;background:#02060e;border:1px solid #333;color:#fff;padding:8px;border-radius:6px;text-align:center"><button onclick="setTime()" style="background:#00e5ff;border:none;padding:8px 14px;border-radius:6px;font-weight:800">SET</button></div>
 </div>
-<p style="font-size:9px;color:#666;margin-top:6px">Ex: 2 hours = 2 likho, 30 min = 0 hour 30 min</p>
-</div>
-
-<div class="addBox">
-<input id="newQuest" placeholder="Apna target likh... ex: Gym">
-<button onclick="addQuest()">+ ADD</button>
-</div>
+<div style="text-align:center;margin-bottom:8px"><span class="iconBtn" onclick="document.getElementById('timeBox').classList.toggle('show')">⏱ SET TIME LIMIT</span></div>
 
 <div class="bar"><div class="fill" id="fill"></div></div>
-<div class="count" id="count">0/0 Completed</div>
+<div class="count" id="count">0/0</div>
 <div id="list"></div>
+<button class="btn" onclick="submitQuest()">SUBMIT QUESTS ➤</button>
 
-<button class="btn" onclick="submitQ()">SUBMIT QUESTS ➤</button>
+<div id="shopSec" style="display:none">
+<h3 style="margin-top:16px;font-size:13px;color:#ffd700;letter-spacing:1px">INVENTORY / SHADOW ARMY</h3>
+<div class="shopGrid" id="shopGrid"></div>
+</div>
+
 <div class="footer"><a class="creator" href="https://instagram.com/shiva_editx100" target="_blank">Created by @shiva_editx100 ✨</a></div>
 </div>
 
-<div class="popup" id="penaltyPop"><div class="pop-box" style="border-color:#ff2a2a;box-shadow:0 0 50px #ff2a2a"><h1 style="font-size:30px;color:#ff2a2a">PENALTY!</h1><p style="margin:12px 0;color:#aaa">Time khatam! Quest fail ho gaya</p><button class="btn" style="background:#ff2a2a" onclick="resetTimer()">RESTART TIMER</button></div></div>
-<div class="popup" id="popup"><div class="pop-box"><h1 style="font-size:34px;color:#00e5ff">LEVEL UP!</h1><p style="margin:12px 0;color:#aaa" id="rankText">All Quest Done</p><button class="btn" onclick="closePop()">CONTINUE</button></div></div>
+<!-- Stat Window -->
+<div class="statWin" id="statWin">
+<h3 style="color:#00e5ff;text-align:center;margin-bottom:10px;letter-spacing:2px">STATUS</h3>
+<div class="statRow"><span>Strength</span><span id="str">10</span></div>
+<div class="statRow"><span>Agility</span><span id="agi">10</span></div>
+<div class="statRow"><span>Intelligence</span><span id="int">10</span></div>
+<div class="statRow"><span>Perception</span><span id="per">10</span></div>
+<div style="margin-top:12px;font-size:9px;color:#888">Gym→STR | Run→AGI | Coding/Study→INT</div>
+<div style="text-align:center;margin-top:10px"><span class="iconBtn" onclick="toggleStats()">CLOSE [C]</span></div>
+</div>
+
+<!-- Level Up -->
+<div class="popup" id="lvlPop"><div class="pop-box"><h1 style="font-size:36px;color:#00e5ff;text-shadow:0 0 20px #00e5ff">LEVEL UP!</h1><p id="lvlText" style="margin:12px 0;color:#fff"></p><button class="btn" onclick="closeLvl()">CONTINUE</button></div></div>
+
+<!-- Penalty -->
+<div class="penaltyScreen" id="penaltyScreen">
+<div>
+<h1 style="font-size:44px;color:#ff2a2a;text-shadow:0 0 20px #ff2a2a">PENALTY ZONE</h1>
+<p style="margin:14px;color:#ffaaaa">You failed to complete quests. Survive the desert.</p>
+<h2 id="penaltyTimer" style="font-size:32px;color:#fff;margin:10px">04:00:00</h2>
+<p style="font-size:11px;color:#888">You cannot add/complete quests during penalty</p>
+<button class="btn" style="background:#ff2a2a;max-width:200px;margin:20px auto;display:block" onclick="skipPenaltyTest()">SKIP (TEST 10s)</button>
+</div>
+</div>
 
 <script>
-let quests = JSON.parse(localStorage.getItem('myQuests') || '["100 Pushups","Study 2 Hours","Code 1 Hour","Wake at 5 AM"]');
-let done = JSON.parse(localStorage.getItem('myDone') || '[false,false,false,false]');
-let totalSeconds = parseInt(localStorage.getItem('totalSec') || '86400');
-let endTime = parseInt(localStorage.getItem('endTime') || '0');
-if(done.length!=quests.length) done = quests.map(()=>false);
-if(!endTime){ endTime = Date.now()+ totalSeconds*1000; localStorage.setItem('endTime',endTime); }
+//--- LocalStorage Data ---
+let data = JSON.parse(localStorage.getItem('soloSystemV3')||'{}');
+let quests = data.quests || ["100 Pushups","Study 2 Hours","Code 1 Hour","Wake at 5 AM"];
+let done = data.done || quests.map(()=>false);
+let stats = data.stats || {str:10,agi:10,int:10,per:10};
+let gold = data.gold || 0;
+let level = data.level || 1;
+let streak = data.streak || 0;
+let rankIdx = data.rankIdx || 0;
+let unlocked = data.unlocked || [];
+let endTime = data.endTime || Date.now()+86400000;
+let penaltyEnd = data.penaltyEnd || 0;
+const ranks = ["E-RANK","D-RANK","C-RANK","B-RANK","A-RANK","S-RANK","SHADOW MONARCH"];
+const titles = ["The Weakest Hunter","Wolf Slayer","Dungeon Survivor","White Tiger","Blood-Red Commander","Monarch's Vessel","Shadow Monarch"];
+const shopItems = [
+{id:'knight',name:'Knight Killer',price:100,img:'https://images.unsplash.com/photo-1599707367072-cd6ada2bc4a5?w=200'},
+{id:'igris',name:'Igris',price:500,img:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200'},
+{id:'beru',name:'Beru',price:1000,img:'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=200'},
+{id:'tusk',name:'Tusk',price:700,img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200'}
+];
 
-function save(){localStorage.setItem('myQuests',JSON.stringify(quests));localStorage.setItem('myDone',JSON.stringify(done));localStorage.setItem('totalSec',totalSeconds);localStorage.setItem('endTime',endTime);}
-function render(){let h='';quests.forEach((q,i)=>{h+=`<div class="card ${done[i]?'done':''}"><div class="left"><div class="num">${String(i+1).padStart(2,'0')}</div><input class="name" value="${q}" onchange="editQuest(${i},this.value)"></div><div class="actions"><div class="check" onclick="toggle(${i})">✓</div><div class="del" onclick="deleteQuest(${i})">×</div></div></div>`});document.getElementById('list').innerHTML=h;updateBar();}
-function updateBar(){let c=done.filter(x=>x).length;let t=quests.length;document.getElementById('fill').style.width=(t?c/t*100:0)+'%';document.getElementById('count').innerText=c+'/'+t+' Completed';}
-function toggle(i){done[i]=!done[i];save();render();}
-function addQuest(){let v=document.getElementById('newQuest').value.trim();if(!v)return alert('Pehle kuch likh!');quests.push(v);done.push(false);document.getElementById('newQuest').value='';save();render();}
-function editQuest(i,val){quests[i]=val;save();}
-function deleteQuest(i){if(confirm('Delete?')){quests.splice(i,1);done.splice(i,1);save();render();}}
-function toggleTimeBox(){document.getElementById('timeBox').classList.toggle('show');}
-function setNewTime(){let h=parseInt(document.getElementById('hoursIn').value||0);let m=parseInt(document.getElementById('minsIn').value||0);totalSeconds=h*3600+m*60;if(totalSeconds<60)return alert('Kam se kam 1 min toh daal!');endTime=Date.now()+totalSeconds*1000;save();toggleTimeBox();document.getElementById('subText').innerText=`TIME SET: ${h}H ${m}M`;}
-function resetTimer(){endTime=Date.now()+totalSeconds*1000;save();document.getElementById('penaltyPop').classList.remove('show');}
-function submitQ(){let c=done.filter(x=>x).length;if(quests.length==0)return alert('Pehle quest add kar!');if(c==quests.length){document.getElementById('rankText').innerText=`${c} Quest Done in Time! RANK A`;document.getElementById('popup').classList.add('show')}else{alert(`SYSTEM: ${c}/${quests.length} done, sab kar!`)}}
-function closePop(){document.getElementById('popup').classList.remove('show');}
+function save(){localStorage.setItem('soloSystemV3',JSON.stringify({quests,done,stats,gold,level,streak,rankIdx,unlocked,endTime,penaltyEnd}))}
+
+function playSound(type){
+ try{
+  let ctx=new (window.AudioContext||window.webkitAudioContext)();
+  let o=ctx.createOscillator(), g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  if(type=='check'){o.frequency.value=800;g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.2)}
+  if(type=='lvl'){o.frequency.value=400;o.frequency.linearRampToValueAtTime(1200,ctx.currentTime+0.6);g.gain.setValueAtTime(0.3,ctx.currentTime)}
+  if(type=='penalty'){o.frequency.value=150;g.gain.setValueAtTime(0.4,ctx.currentTime)}
+  o.start();o.stop(ctx.currentTime+0.6);
+ }catch(e){}
+}
+
+function render(){
+ document.getElementById('list').innerHTML = quests.map((q,i)=>`
+  <div class="card ${done[i]?'done':''}"><div style="display:flex;align-items:center;flex:1"><div class="num">${String(i+1).padStart(2,'0')}</div><input class="qName" value="${q}" onchange="editQ(${i},this.value)"></div><div class="actions"><div class="check" onclick="toggleQ(${i})">✓</div><div class="del" onclick="delQ(${i})">×</div></div></div>
+ `).join('');
+ let c=done.filter(x=>x).length;let t=quests.length;
+ document.getElementById('fill').style.width=(t?c/t*100:0)+'%';
+ document.getElementById('count').innerText=`${c}/${t} Completed`;
+ document.getElementById('gold').innerText=gold;
+ document.getElementById('lvl').innerText=level;
+ document.getElementById('streak').innerText=streak+" Days";
+ document.getElementById('rankBadge').innerText=ranks[rankIdx];
+ document.getElementById('titleDisplay').innerText="TITLE: "+titles[Math.min(rankIdx,titles.length-1)];
+ document.getElementById('str').innerText=stats.str;document.getElementById('agi').innerText=stats.agi;document.getElementById('int').innerText=stats.int;document.getElementById('per').innerText=stats.per;
+ renderShop();
+}
+
+function renderShop(){
+ document.getElementById('shopGrid').innerHTML = shopItems.map(it=>{
+  let isUn = unlocked.includes(it.id);
+  return `<div class="shopItem ${isUn?'unlocked':''}"><img src="${it.img}"><div style="font-size:11px;margin-top:6px">${it.name}</div><div style="font-size:9px;color:${isUn?'#0f0':'#ffd700'}">${isUn?'UNLOCKED':'💎 '+it.price}</div><button ${isUn?'disabled':''} onclick="buyItem('${it.id}')">${isUn?'EQUIPPED':'BUY'}</button></div>`
+ }).join('');
+}
+
+function toggleQ(i){
+ if(penaltyEnd>Date.now()) return alert('Penalty active! Survive first!');
+ done[i]=!done[i];
+ if(done[i]){
+  let name=quests[i].toLowerCase();
+  if(name.includes('gym')||name.includes('push')) stats.str+=2;
+  else if(name.includes('run')||name.includes('walk')) stats.agi+=2;
+  else if(name.includes('code')||name.includes('study')) stats.int+=2;
+  else stats.per+=1;
+  playSound('check');
+ }
+ save();render();
+}
+
+function addQuest(){let v=document.getElementById('newQuest').value.trim();if(!v)return;if(penaltyEnd>Date.now())return alert('Penalty me add nahi kar sakte!');quests.push(v);done.push(false);document.getElementById('newQuest').value='';save();render();}
+function editQ(i,v){quests[i]=v;save()}
+function delQ(i){quests.splice(i,1);done.splice(i,1);save();render()}
+function setTime(){let h=parseInt(document.getElementById('hIn').value||0),m=parseInt(document.getElementById('mIn').value||0);let sec=h*3600+m*60;if(sec<10)sec=10;endTime=Date.now()+sec*1000;save();document.getElementById('timeBox').classList.remove('show')}
+
+function levelUpParticles(){
+ let c=document.getElementById('particleCanvas');c.style.display='block';c.width=innerWidth;c.height=innerHeight;
+ let ctx=c.getContext('2d');let parts=[];for(let i=0;i<120;i++)parts.push({x:c.width/2,y:c.height/2,vx:(Math.random()-0.5)*12,vy:(Math.random()-0.5)*12,life:1});
+ let anim=setInterval(()=>{
+  ctx.clearRect(0,0,c.width,c.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.02;ctx.fillStyle=`rgba(0,229,255,${p.life})`;ctx.fillRect(p.x,p.y,3,3)});
+  if(parts[0].life<=0){clearInterval(anim);c.style.display='none'}
+ },16)
+}
+
+function submitQuest(){
+ let c=done.filter(x=>x).length;if(c!=quests.length) return alert(`SYSTEM: ${c}/${quests.length} only!`);
+ gold+=c*50; level++; streak++;
+ if(streak%3==0 && rankIdx<ranks.length-1) rankIdx++;
+ levelUpParticles();playSound('lvl');
+ document.getElementById('lvlText').innerText=`You reached Level ${level}! +${c*50} Mana Crystals | Rank: ${ranks[rankIdx]}`;
+ document.getElementById('lvlPop').classList.add('show');
+ done=quests.map(()=>false);endTime=Date.now()+86400000;save();render();
+}
+function closeLvl(){document.getElementById('lvlPop').classList.remove('show')}
+
+function buyItem(id){
+ let item=shopItems.find(x=>x.id==id);if(gold<item.price) return alert('Not enough crystals!');gold-=item.price;unlocked.push(id);save();render();playSound('lvl');
+}
+
+function toggleStats(){document.getElementById('statWin').classList.toggle('show')}
+function toggleShop(){let s=document.getElementById('shopSec');s.style.display=s.style.display=='none'?'block':'none'}
+
+document.addEventListener('keydown',e=>{if(e.key.toLowerCase()=='c') toggleStats()});
+
+function skipPenaltyTest(){penaltyEnd=Date.now()+10000;save()}
 
 setInterval(()=>{
- let diff = endTime - Date.now();
- if(diff<=0){document.getElementById('timer').innerText='LEFT: 00:00:00';document.getElementById('penaltyPop').classList.add('show');return;}
+ let now=Date.now();
+ if(penaltyEnd>now){
+  document.getElementById('penaltyScreen').classList.add('show');
+  let diff=Math.floor((penaltyEnd-now)/1000);let h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;
+  document.getElementById('penaltyTimer').innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('timer').innerText='PENALTY';
+  return;
+ }else{
+  document.getElementById('penaltyScreen').classList.remove('show');
+ }
+ let diff=endTime-now;
+ if(diff<=0){
+  playSound('penalty');
+  penaltyEnd=now+4*3600*1000; // 4 hours penalty
+  save();
+  return;
+ }
  let sec=Math.floor(diff/1000);let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
- document.getElementById('timer').innerText=`LEFT: ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+ document.getElementById('timer').innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 },1000)
 
 render();
