@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solo Leveling System - The Monarch Protocol | Shivaeditz</title>
+<meta name="description" content="Real-life Solo Leveling System by Shivaeditz. Daily Quests, Penalty Zone, Level Up. Become The Monarch.">
+<meta name="keywords" content="solo leveling system, daily quest, shivaeditz, level up, self improvement">
+<meta name="author" content="Shivaeditz">
+<meta property="og:title" content="Solo Leveling System - Become The Monarch">
+<meta property="og:description" content="Complete your daily quests or face penalty. By Shivaeditz">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#050510;color:#e6f7ff;font-family:'Rajdhani',sans-serif;min-height:100vh;padding-bottom:90px;background:radial-gradient(120% 80% at 50% 0%, #102040 0%, #050510 60%, #000 100%);overflow-x:hidden}
+.hdr{position:sticky;top:0;z-index:10;background:rgba(5,10,30,0.9);backdrop-filter:blur(12px);border-bottom:1.5px solid #00E5FF;display:flex;justify-content:space-between;align-items:center;padding:14px 16px}
+.logo{font-family:'Orbitron';font-weight:800;font-size:17px;color:#00E5FF;text-shadow:0 0 12px #00E5FF;letter-spacing:1.5px}
+.timer{font-family:'Orbitron';font-size:12px;background:rgba(0,0,0,0.5);border:1px solid #00E5FF;padding:6px 10px;border-radius:8px}
+.timer b{color:#ff4d4d}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px}
+.ttl{font-family:'Orbitron';text-align:center;font-size:28px;margin-top:10px;text-shadow:0 0 15px #00E5FF;letter-spacing:2px}
+.sub{opacity:0.6;text-align:center;letter-spacing:3px;font-size:11px;margin:6px 0 18px}
+.pbg{height:14px;background:rgba(255,255,255,0.08);border-radius:20px;border:1px solid rgba(0,229,255,0.3);overflow:hidden}
+.pbar{height:100%;width:0%;background:linear-gradient(90deg,#00E5FF,#5a5cff);box-shadow:0 0 12px #00E5FF;transition:width 0.4s}
+.ptext{text-align:center;margin:10px 0 22px;font-size:14px}
+.card{background:linear-gradient(180deg, rgba(20,35,80,0.9), rgba(5,10,25,0.9));border:1px solid rgba(0,229,255,0.4);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer}
+.card.done{border-color:#00ff95;opacity:0.7}
+.left{display:flex;align-items:center;gap:12px;flex:1}
+.num{width:32px;height:32px;border-radius:8px;background:rgba(0,229,255,0.15);border:1px solid #00E5FF;display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-size:12px;color:#00E5FF}
+.q{font-size:18px;font-weight:700}
+.chk{width:44px;height:44px;min-width:44px;border-radius:10px;border:2px solid #00E5FF;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:22px}
+.chk.on{background:#00E5FF;color:#000;box-shadow:0 0 15px #00E5FF}
+.btn{width:100%;margin-top:12px;padding:18px;border:none;border-radius:14px;background:linear-gradient(90deg,#00E5FF,#6a7bff);color:#000;font-family:'Orbitron';font-weight:800;font-size:16px;letter-spacing:1px;box-shadow:0 0 25px rgba(0,229,255,0.5);cursor:pointer}
+.btn:active{transform:scale(0.97)}
+.badge{position:fixed;right:12px;bottom:12px;z-index:50;background:rgba(0,229,255,0.12);border:1px solid #00E5FF;color:#00E5FF;padding:7px 14px;border-radius:20px;font-family:'Orbitron';font-size:11px;text-decoration:none;backdrop-filter:blur(8px)}
+#penalty,#win{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+#penalty{background:radial-gradient(circle, #3a0f0f 0%, #000 75%);border:3px solid #ff1a1a}
+#win{background:radial-gradient(circle, #00E5FF 0%, #0066ff 100%);color:#000}
+</style>
+</head>
+<body>
+<div class="hdr"><div class="logo">⬢ SYSTEM</div><div class="timer">LEFT: <b id="tm">23:59:59</b></div></div>
+<div class="wrap">
+<div class="ttl">DAILY QUEST</div>
+<div class="sub">COMPLETE OR FACE PENALTY</div>
+<div class="pbg"><div class="pbar" id="bar"></div></div>
+<div class="ptext"><span id="pt">0</span>/4 Completed</div>
+<div class="card" onclick="tg(0)"><div class="left"><div class="num">01</div><div class="q">100 Pushups</div></div><div class="chk" id="c0"></div></div>
+<div class="card" onclick="tg(1)"><div class="left"><div class="num">02</div><div class="q">Study 2 Hours</div></div><div class="chk" id="c1"></div></div>
+<div class="card" onclick="tg(2)"><div class="left"><div class="num">03</div><div class="q">Code 1 Hour</div></div><div class="chk" id="c2"></div></div>
+<div class="card" onclick="tg(3)"><div class="left"><div class="num">04</div><div class="q">Wake up at 5 AM</div></div><div class="chk" id="c3"></div></div>
+<button class="btn" onclick="sub()">SUBMIT QUESTS ➤</button>
+<p style="text-align:center;opacity:0.5;font-size:11px;margin-top:14px;">Tap card to complete • Auto saves progress</p>
+</div>
+<div id="penalty"><h1 style="font-family:'Orbitron';color:#ff1a1a;font-size:32px;margin-bottom:12px;">⚠️ PENALTY QUEST ⚠️</h1><h2 style="color:#fff">TIME'S UP, PLAYER</h2><p style="color:#ffb3b3;max-width:360px;margin-top:10px;line-height:1.5;">You failed daily quests. Desert Zone: Run 5KM. No rewards will be given.</p><button class="btn" style="background:#ff1a1a;color:#fff;max-width:320px;margin-top:28px;" onclick="clp()">I ACCEPT PENALTY</button></div>
+<div id="win"><h1 style="font-family:'Orbitron';font-size:48px;">LEVEL UP!</h1><h2 style="margin-top:12px;">QUEST COMPLETE</h2><p style="margin-top:8px;font-weight:700;">+100 XP • +10 STAT POINTS • RANK UP!</p><button class="btn" style="background:#000;color:#00E5FF;max-width:320px;margin-top:28px;" onclick="document.getElementById('win').style.display='none'">CONTINUE BECOMING MONARCH</button></div>
+<a class="badge" href="https://instagram.com/shivaeditz" target="_blank">Created by @shivaeditz ✨</a>
+<script>
+let ck=[false,false,false,false];let sv=localStorage.getItem('sl_q');if(sv){try{ck=JSON.parse(sv)}catch(e){}}
+function rn(){ck.forEach((v,i)=>{let cd=document.getElementsByClassName('card')[i];let el=document.getElementById('c'+i);if(v){cd.classList.add('done');el.classList.add('on');el.innerHTML='✓'}else{cd.classList.remove('done');el.classList.remove('on');el.innerHTML=''}});let d=ck.filter(Boolean).length;document.getElementById('bar').style.width=(d/4*100)+'%';document.getElementById('pt').innerText=d;localStorage.setItem('sl_q',JSON.stringify(ck));}
+function tg(i){ck[i]=!ck[i];if(navigator.vibrate) navigator.vibrate(20);rn();}
+function sub(){let d=ck.filter(Boolean).length;if(d===4){document.getElementById('win').style.display='flex';if(navigator.vibrate) navigator.vibrate([50,50,100]);ck=[false,false,false,false];rn();}else{alert('SYSTEM: Complete all 4 quests, Player. You are at '+d+'/4');}}
+function clp(){document.getElementById('penalty').style.display='none';t=86400;localStorage.setItem('sl_t',t);}
+let t=parseInt(localStorage.getItem('sl_t')||86400);let last=localStorage.getItem('sl_d');let td=new Date().toDateString();if(last!==td){t=86400;localStorage.setItem('sl_d',td);}
+function tk(){t--;if(t<0)t=0;localStorage.setItem('sl_t',t);let h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60;document.getElementById('tm').innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(t===0)document.getElementById('penalty').style.display='flex';}
+setInterval(tk,1000);rn();tk();
+</script>
+</body>
+</html>
